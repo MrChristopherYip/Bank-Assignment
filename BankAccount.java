@@ -9,8 +9,8 @@ public class BankAccount {
     public BankAccount(String accountNum, double balance, String customerName, String email, String phoneNum) {
         this.accountNum = accountNum;
         this.balance = balance;
-        this.customerName = customerName;
-        this.email = email;
+        this.customerName = customerName.trim().toUpperCase();
+        this.email = email.toUpperCase();
         this.phoneNum = phoneNum;
     }
 
@@ -35,7 +35,7 @@ public class BankAccount {
     }
 
     public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+        this.customerName = customerName.trim().toUpperCase();
     }
 
     public String getEmail() {
@@ -43,7 +43,7 @@ public class BankAccount {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.toUpperCase();
     }
 
     public String getPhoneNum() {
@@ -65,18 +65,15 @@ public class BankAccount {
 
     public void deposit(double amt) {
         balance += amt;
-        System.out.println("Deposit: $" + amt);
-        System.out.println("Current balance: $" + balance);
     }
 
-    public void withdraw(double amt) {
+    public boolean withdraw(double amt) {
         if (amt > balance)
-            System.out.println("Insufficient funds.");
+            return false;
         else {
             balance -= amt;
-            System.out.println("Withdraw: $" + amt);
+            return true;
         }
-        System.out.println("Current balance: $" + balance);
     }
 
     public void printBalance() {

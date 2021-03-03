@@ -20,3 +20,5 @@ Create Bank Class Assignment
    - Exit out of program
 
 Add some System.out.println's in all methods above as well
+
+Update: Implement Data Access Object pattern.

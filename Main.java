@@ -1,41 +1,54 @@
 import java.util.Scanner;
 
 public class Main {
+    public static final Scanner input = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
         int choice = 0;
+        BankAccountsDAO bankAccounts = new BankAccountsDAO();
 
-        BankAccount account = new BankAccount(
-                "123456789",
-                500.0,
-                "Christopher Yip",
-                "mr.christopheryip@gmail.com",
-                "(669)333-1779");
-
-        account.printAccount();
-
-        while (choice != 4) {
-            System.out.println("\nMenu");
-            System.out.println("1. View account balance");
-            System.out.println("2. Make a deposit");
-            System.out.println("3. Make a withdrawal");
-            System.out.println("4. Exit");
+        while (choice != 5) {
+            System.out.println("\nMain Menu");
+            System.out.println("1. Open a new account");
+            System.out.println("2. Print all accounts");
+            System.out.println("3. Access an account");
+            System.out.println("4. Close an account");
+            System.out.println("5. Exit");
             System.out.print("Choose an option: ");
             choice = input.nextInt();
+            input.nextLine();
 
             switch (choice) {
                 case 1:
-                    account.printBalance();
+                    if (!bankAccounts.createAccount(getAccountDetails()))
+                        System.out.println("\nAn account with that number already exists!");
+                    else
+                        System.out.println("\nAccount created.");
                     break;
                 case 2:
-                    System.out.print("\nEnter amount to deposit: $");
-                    account.deposit(input.nextDouble());
+                    System.out.println();
+                    for (BankAccount account : bankAccounts.getAllAccounts()) {
+                        account.printAccount();
+                        System.out.println();
+                    }
                     break;
                 case 3:
-                    System.out.print("\nEnter amount to withdraw: $");
-                    account.withdraw(input.nextDouble());
+                    System.out.print("\nEnter account number to access: ");
+                    BankAccount account = bankAccounts.getAccount(input.next());
+                    input.nextLine();
+
+                    if (account == null)
+                        System.out.println("\nAccount does not exist!");
+                    else
+                        bankAccounts.updateAccount(accessAccount(account));
                     break;
                 case 4:
+                    System.out.print("\nEnter account number to close: ");
+                    if (!bankAccounts.deleteAccount(input.next()))
+                        System.out.println("\nAccount does not exist!");
+                    input.nextLine();
+                    break;
+                case 5:
                     System.out.println("\nGoodbye!");
                     break;
                 default:
@@ -43,5 +56,94 @@ public class Main {
             }
         }
         input.close();
+    }
+
+    private static BankAccount getAccountDetails() {
+
+        System.out.print("\nAccount number: ");
+        String accountNum = input.next();
+        input.nextLine();
+
+        System.out.print("Name: ");
+        String name = input.nextLine();
+
+        System.out.print("Balance: ");
+        double balance = input.nextDouble();
+        input.nextLine();
+
+        System.out.print("Email: ");
+        String email = input.next();
+        input.nextLine();
+
+        System.out.print("Phone number: ");
+        String phoneNum = input.next();
+        input.nextLine();
+
+        return new BankAccount(accountNum, balance, name, email, phoneNum);
+    }
+
+    private static BankAccount accessAccount(BankAccount account) {
+        int choice = 0;
+
+        while (choice != 5) {
+            System.out.println("\nAccount Menu");
+            System.out.println("1. View account balance");
+            System.out.println("2. Make a deposit");
+            System.out.println("3. Make a withdrawal");
+            System.out.println("4. Update account information");
+            System.out.println("5. Exit to main menu");
+            System.out.print("Choose an option: ");
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.println();
+                    account.printBalance();
+                    break;
+                case 2:
+                    System.out.print("\nEnter amount to deposit: $");
+                    account.deposit(input.nextDouble());
+                    input.nextLine();
+                    break;
+                case 3:
+                    System.out.print("\nEnter amount to withdraw: $");
+                    if (!account.withdraw(input.nextDouble()))
+                        System.out.println("\nInsufficient funds!");
+                    input.nextLine();
+                    break;
+                case 4:
+                    changeAccountDetails(account);
+                    break;
+                case 5:
+                    break;
+                default:
+                    System.out.println("\nSelection invalid!");
+            }
+        }
+        return account;
+    }
+
+    private static void changeAccountDetails(BankAccount account) {
+
+        System.out.println("Name: " + account.getCustomerName());
+        System.out.print("New name (leave blank to skip change): ");
+        String s = input.nextLine().trim();
+        if (s.length() > 0)
+            account.setCustomerName(s);
+
+        System.out.println("Email: " + account.getEmail());
+        System.out.print("New email (leave blank to skip change): ");
+        s = input.next();
+        input.nextLine();
+        if (s.length() > 0)
+            account.setEmail(s);
+
+        System.out.println("Phone number: " + account.getPhoneNum());
+        System.out.print("New number (leave blank to skip change): ");
+        s = input.next();
+        input.nextLine();
+        if (s.length() > 0)
+            account.setPhoneNum(s);
     }
 }
